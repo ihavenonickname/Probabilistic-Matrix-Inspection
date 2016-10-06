@@ -1,4 +1,4 @@
-from random import randint
+from random import uniform
 import sys
 
 def random_entry(n, m):
@@ -6,13 +6,13 @@ def random_entry(n, m):
     '''
 
     # a random number for each column, and it for each line.
-    pa = [[randint(1, 99) for i in range(m)] for j in range(n)]
+    pa = [[uniform(0, 1) for i in range(m)] for j in range(n)]
 
     a = []
 
     # a random {1, 0} for each column in pa, and it for each line in pa.
     for line in pa:
-        newline = [(1 if randint(1, 99) < cell else 0) for cell in line]
+        newline = [(1 if uniform(0, 1) < cell else 0) for cell in line]
         a.append(newline)
     
     return a, pa
@@ -26,27 +26,28 @@ def inspection_column_order(pa):
     columns_order = []
 
     # a tuple of (column index, probability of success) for each column in pa.
-    for column in range(m):
+    for column_index in range(m):
         # sum all probabilities in column.
-        success = sum(pa[line][column] for line in range(n))
-        # appends the index and the probability of the column.
-        columns_order.append((column, success))
+        success = sum(pa[line_index][column_index] for line_index in range(n))
+
+        # appends its index and probability.
+        columns_order.append((column_index, success))
     
     # sorts by probability of success.
     columns_order = sorted(columns_order, key=(lambda x: x[1]), reverse=True)
 
-    # returns only the column indexes.
+    # returns only column indexes.
     return [line for line, success in columns_order]
 
 def inspection_values_order(column):
     '''Given a column of probability, returns the optimal order of values to be inspected.
     '''
 
-    # creates a sorted list with the value index and its probability.
+    # creates a list with the index of the value and its probability, sorted by probability.
     column_sorted = sorted(enumerate(column), key=(lambda x: x[1]))
 
-    # returns only the indexes (which are already sorted).
-    return [line for line, value in column_sorted]
+    # returns only indexes (which are already sorted).
+    return [index for index, value in column_sorted]
 
 def column_values(column_index, pa):
     '''Given a column index and a matrix, returns the values of respective column.
@@ -55,7 +56,7 @@ def column_values(column_index, pa):
     return [pa[line_index][column_index] for line_index in range(n)]
 
 def compute(a, pa):
-    '''Given two matrix of Bernoulli random numbers, returns an indication of its feasibility and the values inspected.
+    '''Given two matrices of Bernoulli random numbers, returns its feasibility and the inspected values.
     '''
 
     n, m = len(a), len(a[0])
@@ -79,10 +80,10 @@ def compute(a, pa):
                 feasible_ones += 1
                 continue
 
-            # remembers what values were inspected.
+            # remembers the inspected value.
             positions_inspected.append((line_index, column_index))
 
-            # if it's 0, no need to inspect other values in same column.
+            # if it is 0, no need to inspect other values in same column.
             if a[line_index][column_index] == 1:
                 feasible_ones += 1
             else:
@@ -109,7 +110,7 @@ def show_results(a, pa, is_feasible, values_inspected):
 
     for line in pa:
         for value in line:
-            print("%3d" % value, end=" ")
+            print("%3.1f" % value, end=" ")
         print("\n")
 
     print()
@@ -124,14 +125,33 @@ def show_results(a, pa, is_feasible, values_inspected):
 
     for line, column in values_inspected:
         print("(%d, %d)" % (line, column))
-    
+
+def example():
+    '''Example found in 3.2 section.
+    It is expected a policy inspecting in the following order:
+    (0, 0) (1, 0) (0, 1) (1, 1)
+    After third inspection, the algorithm concludes the matrix is infeasible. 
+    '''
+
+    a = [
+        [1, 0],
+        [0, 1]
+    ]
+
+    pa = [
+        [0.6, 0.7],
+        [0.9, 0.8]
+    ]
+
+    return a, pa
 
 if __name__ == "__main__":
-    n, m = sys.argv[1:]
+    if len(sys.argv) == 3:
+        n, m = sys.argv[1:]
+        a, pa = random_entry(int(n), int(m))
+    else:
+        a, pa = example()
 
-    a, pa = random_entry(int(n), int(m))
     is_feasible, values_inspected = compute(a, pa)
 
     show_results(a, pa, is_feasible, values_inspected)
-
-    

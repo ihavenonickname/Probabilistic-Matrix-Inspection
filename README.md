@@ -1,6 +1,6 @@
 # Probabilistic Matrix Inspection
 
-A Python implementention for the proposed algorithm in the article **Probabilistic Matrix Inspection and Group Scheduling**.
+A Python implementention for the proposed algorithm in the paper **Probabilistic Matrix Inspection and Group Scheduling**.
 
 ## Usage
 
@@ -14,10 +14,10 @@ or
 
     $ python matrix-inspection.py
 
-It will compute the example provided in the article.
+It will compute the example provided in the paper.
 
 ## Credits
 
-[Original article](http://www.ijcai.org/Proceedings/16/Papers/053.pdf) by Hooyeon Lee and Ashish Goel.
+[Original paper](http://www.ijcai.org/Proceedings/16/Papers/053.pdf) by Hooyeon Lee and Ashish Goel.
 
 Implementation by Gabriel Blank Stift Mousquer.
